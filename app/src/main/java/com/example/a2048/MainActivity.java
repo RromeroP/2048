@@ -5,6 +5,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.gridlayout.widget.GridLayout;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         int first_cells = 0;
-boolean prueba = true;
+        boolean prueba = true;
         cells[0][0] = findViewById(R.id.cell_0);
         cells[0][1] = findViewById(R.id.cell_1);
         cells[0][2] = findViewById(R.id.cell_2);
@@ -47,11 +48,30 @@ boolean prueba = true;
         cells[3][2] = findViewById(R.id.cell_14);
         cells[3][3] = findViewById(R.id.cell_15);
 
+        Random r = new Random();
+        int counter = 0;
 
-                        cells[0][3].setText("2");
-                        cells[0][3].setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell_64, null));
+        while (counter < 2) {
 
+            int r_1 = r.nextInt(4);
+            int r_2 = r.nextInt(4);
 
+            if (cells[r_1][r_2].getText() == "") {
+                int r_3 = r.nextInt(2);
+
+                if (r_3 == 0) {
+                    cells[r_1][r_2].setText("2");
+                    cells[r_1][r_2].setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell_2, null));
+                    counter += 1;
+                } else {
+                    cells[r_1][r_2].setText("4");
+                    cells[r_1][r_2].setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell_4, null));
+                    counter += 1;
+                }
+
+            }
+
+        }
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
     }
