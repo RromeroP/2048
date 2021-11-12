@@ -1,16 +1,12 @@
 package com.example.a2048;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GestureDetectorCompat;
-import androidx.gridlayout.widget.GridLayout;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 
 import java.util.Random;
@@ -19,7 +15,17 @@ public class MainActivity extends AppCompatActivity {
 
     private GestureDetectorCompat mDetector;
 
-    TextView[][] cells = new TextView[4][4];
+    static int prueba = 3;
+
+    static int SIZE = 4;
+
+    static TextView[][] cells = new TextView[SIZE][SIZE];
+    static String[] cell_values = {"", "2", "4", "8", "16", "32", "64",
+            "128", "256", "512", "1024", "2048"};
+    static int[] cell_bg = {R.drawable.cell_empty, R.drawable.cell_2, R.drawable.cell_4,
+            R.drawable.cell_8, R.drawable.cell_16, R.drawable.cell_32, R.drawable.cell_64,
+            R.drawable.cell_128, R.drawable.cell_256, R.drawable.cell_512, R.drawable.cell_1024,
+            R.drawable.cell_2048};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         int first_cells = 0;
-        boolean prueba = true;
+
         cells[0][0] = findViewById(R.id.cell_0);
         cells[0][1] = findViewById(R.id.cell_1);
         cells[0][2] = findViewById(R.id.cell_2);
@@ -48,34 +54,102 @@ public class MainActivity extends AppCompatActivity {
         cells[3][2] = findViewById(R.id.cell_14);
         cells[3][3] = findViewById(R.id.cell_15);
 
-        Random r = new Random();
-        int counter = 0;
 
-        while (counter < 2) {
-
-            int r_1 = r.nextInt(4);
-            int r_2 = r.nextInt(4);
-
-            if (cells[r_1][r_2].getText() == "") {
-                int r_3 = r.nextInt(2);
-
-                if (r_3 == 0) {
-                    cells[r_1][r_2].setText("2");
-                    cells[r_1][r_2].setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell_2, null));
-                    counter += 1;
-                } else {
-                    cells[r_1][r_2].setText("4");
-                    cells[r_1][r_2].setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.cell_4, null));
-                    counter += 1;
-                }
-
-            }
-
-        }
+        generateCell(2);
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
     }
 
+    private void generateCell(int quantity) {
+
+        cells[2][1].setText(cell_values[1]);
+        cells[2][1].setBackgroundResource(cell_bg[1]);
+
+        cells[2][3].setText(cell_values[1]);
+        cells[2][3].setBackgroundResource(cell_bg[1]);
+       /* int counter = 0;
+        Random r = new Random();
+
+        while (counter < quantity) {
+
+            int r_1 = r.nextInt(SIZE);
+            int r_2 = r.nextInt(SIZE);
+
+            if (cells[r_1][r_2].getText() == "") {
+                int r_3 = r.nextInt(2) + 1;
+
+                cells[r_1][r_2].setText(cell_values[r_3]);
+                cells[r_1][r_2].setBackgroundResource(cell_bg[r_3]);
+                counter += 1;
+            }
+
+        }*/
+    }
+
+    private static int getIndex(String text) {
+        for (int i = 0; i < cell_values.length; i++) {
+            if (cell_values[i].contentEquals(text)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private static void moveCell(int u_d, int l_r) {
+
+        for (int i = SIZE - 1; i >= 0; i--) {
+
+
+            if (i + l_r>= 0) {
+
+                String cellText = (String) cells[2][i].getText();
+                String next_cellText = (String) cells[2][i + l_r].getText();
+
+                if (cellText == next_cellText && next_cellText != "") {
+
+                    cells[2][i + l_r].setText(cell_values[getIndex(cellText) + 1]);
+                    cells[2][i + l_r].setBackgroundResource(cell_bg[getIndex(cellText) + 1]);
+
+                } else {
+                    cells[2][i + l_r].setText(cell_values[getIndex(cellText)]);
+                    cells[2][i + l_r].setBackgroundResource(cell_bg[getIndex(cellText)]);
+
+                }
+
+                cells[2][i].setText(cell_values[0]);
+                cells[2][i].setBackgroundResource(cell_bg[0]);
+            }
+        }
+        --prueba;
+     /*   for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+
+                //Comprobamos que no nos salimos del array
+                if (i + u_d >= 0 && j + l_r >= 0 &&
+                        i + u_d < SIZE && j + l_r < SIZE) {
+                    CharSequence cellText = cells[i][j].getText();
+                    CharSequence next_cellText = cells[i + u_d][j + l_r].getText();
+
+                    if (cellText == next_cellText && next_cellText != "") {
+                        cells[i + u_d][j + l_r].setText(cell_values[getIndex(cellText) + 1]);
+                        cells[i + u_d][j + l_r].setBackgroundResource(cell_bg[getIndex(cellText) + 1]);
+
+                        cells[i][j].setText(cell_values[0]);
+                        cells[i][j].setBackgroundResource(cell_bg[0]);
+
+                    } else if (next_cellText != "") {
+
+                        cells[i + u_d][j + l_r].setText(cell_values[getIndex(cellText)]);
+                        cells[i + u_d][j + l_r].setBackgroundResource(cell_bg[getIndex(cellText)]);
+
+                        cells[i][j].setText(cell_values[0]);
+                        cells[i][j].setBackgroundResource(cell_bg[0]);
+                    }
+                }
+            }
+        }*/
+
+    }
     // GESTURE DETECTION
 
     @Override
@@ -97,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
             float x2 = event2.getX();
             float y2 = event2.getY();
 
-
             Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
 
             Direction direction = getDirection(x1, y1, x2, y2);
@@ -117,16 +190,28 @@ public class MainActivity extends AppCompatActivity {
             public static Direction fromAngle(double angle) {
                 if (inRange(angle, 45, 135)) {
                     Log.d(DEBUG_TAG, "onFling: up");
+                    moveCell(-1, 0);
+
                     return Direction.up;
+
                 } else if (inRange(angle, 0, 45) || inRange(angle, 315, 360)) {
                     Log.d(DEBUG_TAG, "onFling: right");
+                    moveCell(0, 1);
+
                     return Direction.right;
+
                 } else if (inRange(angle, 225, 315)) {
                     Log.d(DEBUG_TAG, "onFling: down");
+                    moveCell(1, 0);
+
                     return Direction.down;
+
                 } else {
                     Log.d(DEBUG_TAG, "onFling: left");
+                    moveCell(0, -1);
+
                     return Direction.left;
+
                 }
 
             }
