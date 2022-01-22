@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
 import java.util.Random;
@@ -14,8 +16,6 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     private GestureDetectorCompat mDetector;
-
-    static int prueba = 3;
 
     static int SIZE = 4;
 
@@ -27,12 +27,14 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.cell_128, R.drawable.cell_256, R.drawable.cell_512, R.drawable.cell_1024,
             R.drawable.cell_2048};
 
+    static String lastCombined = "";
+
+    static int impossibleMoves = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        int first_cells = 0;
 
         cells[0][0] = findViewById(R.id.cell_0);
         cells[0][1] = findViewById(R.id.cell_1);
@@ -54,36 +56,92 @@ public class MainActivity extends AppCompatActivity {
         cells[3][2] = findViewById(R.id.cell_14);
         cells[3][3] = findViewById(R.id.cell_15);
 
-
         generateCell(2);
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
+        getSupportActionBar().hide();
     }
 
-    private void generateCell(int quantity) {
+    private static void checkPossibleMovements() {
 
-        cells[2][1].setText(cell_values[1]);
-        cells[2][1].setBackgroundResource(cell_bg[1]);
+        int movesUp = 0;
+        int movesLeft = 0;
+        int movesRight = 0;
+        int movesDown = 0;
 
-        cells[2][3].setText(cell_values[1]);
-        cells[2][3].setBackgroundResource(cell_bg[1]);
-       /* int counter = 0;
-        Random r = new Random();
+        int movesTotal = 4;
 
-        while (counter < quantity) {
-
-            int r_1 = r.nextInt(SIZE);
-            int r_2 = r.nextInt(SIZE);
-
-            if (cells[r_1][r_2].getText() == "") {
-                int r_3 = r.nextInt(2) + 1;
-
-                cells[r_1][r_2].setText(cell_values[r_3]);
-                cells[r_1][r_2].setBackgroundResource(cell_bg[r_3]);
-                counter += 1;
+        //Checks all impossible moves Up and Left. If there are 48 impossible moves, you can move in
+        //that direction
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                for (int k = 0; k < SIZE; k++) {
+                    impossibleMoves = 0;
+                    checkMovement(i, j, -1, 0, true);
+                    movesUp += impossibleMoves;
+                    impossibleMoves = 0;
+                    checkMovement(i, j, 0, -1, true);
+                    movesLeft += impossibleMoves;
+                }
             }
+        }
 
-        }*/
+        //Checks all impossible moves Down and Rigth. If there are 48 impossible moves, you can move
+        //in that direction
+        for (int i = SIZE - 1; i >= 0; i--) {
+            for (int j = SIZE - 1; j >= 0; j--) {
+                for (int k = SIZE - 1; k >= 0; k--) {
+                    impossibleMoves = 0;
+                    checkMovement(i, j, 1, 0, true);
+                    movesDown += impossibleMoves;
+                    impossibleMoves = 0;
+                    checkMovement(i, j, 0, 1, true);
+                    movesRight += impossibleMoves;
+                }
+            }
+        }
+
+        if (movesDown == 48) movesTotal -= 1;
+        if (movesRight == 48) movesTotal -= 1;
+        if (movesUp == 48) movesTotal -= 1;
+        if (movesLeft == 48) movesTotal -= 1;
+
+        //TODO Make a lose message window or change to a different activity here
+        if (movesTotal == 0) System.out.println("You lose");
+    }
+
+    private static void generateCell(int quantity) {
+        int emptyCells = 0;
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (cells[i][j].getText() == "") {
+                    emptyCells += 1;
+                }
+            }
+        }
+
+        if (emptyCells >= 1) {
+            int counter = 0;
+            Random r = new Random();
+
+            while (counter < quantity) {
+
+                int r_1 = r.nextInt(SIZE);
+                int r_2 = r.nextInt(SIZE);
+
+                if (cells[r_1][r_2].getText() == "") {
+                    int r_3 = r.nextInt(2) + 1;
+
+                    cells[r_1][r_2].setText(cell_values[r_3]);
+                    cells[r_1][r_2].setBackgroundResource(cell_bg[r_3]);
+                    counter += 1;
+                }
+            }
+        } else {
+            checkPossibleMovements();
+        }
+
     }
 
     private static int getIndex(String text) {
@@ -95,60 +153,78 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
-    private static void moveCell(int u_d, int l_r) {
+    private static boolean checkBounds(int x, int y, int vertical, int horizontal) {
 
-        for (int i = SIZE - 1; i >= 0; i--) {
-
-
-            if (i + l_r>= 0) {
-
-                String cellText = (String) cells[2][i].getText();
-                String next_cellText = (String) cells[2][i + l_r].getText();
-
-                if (cellText == next_cellText && next_cellText != "") {
-
-                    cells[2][i + l_r].setText(cell_values[getIndex(cellText) + 1]);
-                    cells[2][i + l_r].setBackgroundResource(cell_bg[getIndex(cellText) + 1]);
-
-                } else {
-                    cells[2][i + l_r].setText(cell_values[getIndex(cellText)]);
-                    cells[2][i + l_r].setBackgroundResource(cell_bg[getIndex(cellText)]);
-
-                }
-
-                cells[2][i].setText(cell_values[0]);
-                cells[2][i].setBackgroundResource(cell_bg[0]);
-            }
+        //left
+        if (horizontal == -1) {
+            return y < 0;
         }
-        --prueba;
-     /*   for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
 
-                //Comprobamos que no nos salimos del array
-                if (i + u_d >= 0 && j + l_r >= 0 &&
-                        i + u_d < SIZE && j + l_r < SIZE) {
-                    CharSequence cellText = cells[i][j].getText();
-                    CharSequence next_cellText = cells[i + u_d][j + l_r].getText();
+        //right
+        else if (horizontal == 1) {
+            return y >= SIZE;
+        }
 
-                    if (cellText == next_cellText && next_cellText != "") {
-                        cells[i + u_d][j + l_r].setText(cell_values[getIndex(cellText) + 1]);
-                        cells[i + u_d][j + l_r].setBackgroundResource(cell_bg[getIndex(cellText) + 1]);
+        //up
+        else if (vertical == -1) {
+            return x < 0;
+        }
 
-                        cells[i][j].setText(cell_values[0]);
-                        cells[i][j].setBackgroundResource(cell_bg[0]);
+        //down
+        else if (vertical == 1) {
+            return x >= SIZE;
+        }
+        return false;
 
-                    } else if (next_cellText != "") {
+    }
 
-                        cells[i + u_d][j + l_r].setText(cell_values[getIndex(cellText)]);
-                        cells[i + u_d][j + l_r].setBackgroundResource(cell_bg[getIndex(cellText)]);
+    private static void checkMovement(int x, int y, int vertical, int horizontal, boolean check) {
+        boolean canMove = true;
 
-                        cells[i][j].setText(cell_values[0]);
-                        cells[i][j].setBackgroundResource(cell_bg[0]);
-                    }
+        int newx = x;
+        int newy = y;
+
+        String cellText = (String) cells[x][y].getText();
+
+        if (cellText == "") canMove = false;
+
+        while (canMove) {
+            newx += vertical;
+            newy += horizontal;
+
+            //Check if the next cell is outside bounds
+            if (checkBounds(newx, newy, vertical, horizontal)) break;
+
+            String newText = (String) cells[newx][newy].getText();
+
+            if (newText == "") {
+                if (!check) {
+                    cells[newx][newy].setText(cell_values[getIndex(cellText)]);
+                    cells[newx][newy].setBackgroundResource(cell_bg[getIndex(cellText)]);
+
+                    cells[newx - vertical][newy - horizontal].setText(cell_values[0]);
+                    cells[newx - vertical][newy - horizontal].setBackgroundResource(cell_bg[0]);
                 }
-            }
-        }*/
+                impossibleMoves = 0;
 
+            } else if (newText == cellText && cellText != lastCombined) {
+                if (!check) {
+                    cells[newx][newy].setText(cell_values[getIndex(cellText) + 1]);
+                    cells[newx][newy].setBackgroundResource(cell_bg[getIndex(cellText) + 1]);
+
+                    cells[newx - vertical][newy - horizontal].setText(cell_values[0]);
+                    cells[newx - vertical][newy - horizontal].setBackgroundResource(cell_bg[0]);
+
+                    lastCombined = cell_values[getIndex(cellText) + 1];
+                }
+                canMove = false;
+                impossibleMoves = 0;
+            } else {
+                impossibleMoves = 1;
+                canMove = false;
+            }
+
+        }
     }
     // GESTURE DETECTION
 
@@ -190,25 +266,65 @@ public class MainActivity extends AppCompatActivity {
             public static Direction fromAngle(double angle) {
                 if (inRange(angle, 45, 135)) {
                     Log.d(DEBUG_TAG, "onFling: up");
-                    moveCell(-1, 0);
+
+                    for (int i = 0; i < SIZE; i++) {
+                        for (int j = 0; j < SIZE; j++) {
+                            for (int k = 0; k < SIZE; k++) {
+                                checkMovement(i, j, -1, 0, false);
+                            }
+                        }
+                    }
+
+                    generateCell(1);
+                    lastCombined = "";
 
                     return Direction.up;
 
                 } else if (inRange(angle, 0, 45) || inRange(angle, 315, 360)) {
                     Log.d(DEBUG_TAG, "onFling: right");
-                    moveCell(0, 1);
+
+                    for (int i = SIZE - 1; i >= 0; i--) {
+                        for (int j = SIZE - 1; j >= 0; j--) {
+                            for (int k = SIZE - 1; k >= 0; k--) {
+                                checkMovement(i, j, 0, 1, false);
+                            }
+                        }
+                    }
+
+                    generateCell(1);
+                    lastCombined = "";
 
                     return Direction.right;
 
                 } else if (inRange(angle, 225, 315)) {
                     Log.d(DEBUG_TAG, "onFling: down");
-                    moveCell(1, 0);
+
+                    for (int i = SIZE - 1; i >= 0; i--) {
+                        for (int j = SIZE - 1; j >= 0; j--) {
+                            for (int k = SIZE - 1; k >= 0; k--) {
+                                checkMovement(i, j, 1, 0, false);
+                            }
+                        }
+                    }
+
+                    generateCell(1);
+                    lastCombined = "";
 
                     return Direction.down;
 
                 } else {
                     Log.d(DEBUG_TAG, "onFling: left");
-                    moveCell(0, -1);
+
+                    for (int i = 0; i < SIZE; i++) {
+                        for (int j = 0; j < SIZE; j++) {
+                            for (int k = 0; k < SIZE; k++) {
+                                checkMovement(i, j, 0, -1, false);
+                            }
+                        }
+                    }
+
+                    generateCell(1);
+                    lastCombined = "";
 
                     return Direction.left;
 
