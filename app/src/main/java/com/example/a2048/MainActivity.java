@@ -3,13 +3,18 @@ package com.example.a2048;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
+import android.view.animation.AnimationUtils;
+import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -17,7 +22,15 @@ public class MainActivity extends AppCompatActivity {
 
     private GestureDetectorCompat mDetector;
 
+    static SharedPreferences pref;
+    static SharedPreferences.Editor editor;
     static int SIZE = 4;
+
+    static int moves_value = 1;
+    static TextView move;
+    static TextView score;
+    static TextView best_score;
+    static int best_value;
 
     static TextView[][] cells = new TextView[SIZE][SIZE];
     static String[] cell_values = {"", "2", "4", "8", "16", "32", "64",
@@ -30,11 +43,28 @@ public class MainActivity extends AppCompatActivity {
     static String lastCombined = "";
 
     static int impossibleMoves = 0;
+    Chronometer timer;
+
+    static Animation pulse;
+    static Animation spawn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
+
+        pulse = AnimationUtils.loadAnimation(this, R.anim.pulse);
+        spawn = AnimationUtils.loadAnimation(this, R.anim.spawn);
+
+        best_score = findViewById(R.id.best_value);
+        score = findViewById(R.id.score_value);
+        move = findViewById(R.id.move_counter);
+
+        best_value = pref.getInt("best_score", 0);
+        best_score.setText(String.valueOf(best_value));
 
         cells[0][0] = findViewById(R.id.cell_0);
         cells[0][1] = findViewById(R.id.cell_1);
@@ -57,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
         cells[3][3] = findViewById(R.id.cell_15);
 
         generateCell(2);
+
+        timer = (Chronometer) findViewById(R.id.timer);
+        timer.start();
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
         getSupportActionBar().hide();
@@ -107,7 +140,9 @@ public class MainActivity extends AppCompatActivity {
         if (movesLeft == 48) movesTotal -= 1;
 
         //TODO Make a lose message window or change to a different activity here
-        if (movesTotal == 0) System.out.println("You lose");
+        if (movesTotal == 0)
+            Toast.makeText(score.getContext(), "You lose", Toast.LENGTH_SHORT).show();
+
     }
 
     private static void generateCell(int quantity) {
@@ -136,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
                     cells[r_1][r_2].setText(cell_values[r_3]);
                     cells[r_1][r_2].setBackgroundResource(cell_bg[r_3]);
                     counter += 1;
+
+                    cells[r_1][r_2].startAnimation(spawn);
                 }
             }
         } else {
@@ -183,6 +220,8 @@ public class MainActivity extends AppCompatActivity {
 
         int newx = x;
         int newy = y;
+        String new_value;
+        int score_value;
 
         String cellText = (String) cells[x][y].getText();
 
@@ -209,13 +248,36 @@ public class MainActivity extends AppCompatActivity {
 
             } else if (newText == cellText && cellText != lastCombined) {
                 if (!check) {
-                    cells[newx][newy].setText(cell_values[getIndex(cellText) + 1]);
+
+                    new_value = cell_values[getIndex(cellText) + 1];
+
+                    cells[newx][newy].setText(new_value);
                     cells[newx][newy].setBackgroundResource(cell_bg[getIndex(cellText) + 1]);
 
                     cells[newx - vertical][newy - horizontal].setText(cell_values[0]);
                     cells[newx - vertical][newy - horizontal].setBackgroundResource(cell_bg[0]);
 
                     lastCombined = cell_values[getIndex(cellText) + 1];
+
+                    //Update current score
+                    score_value = Integer.parseInt(score.getText().toString()) +
+                            Integer.parseInt(new_value);
+
+                    score.setText(String.valueOf(score_value));
+
+                    //Check if it has to update de best score
+                    if (score_value > best_value) {
+                        best_value = score_value;
+
+                        editor.putInt("best_score", score_value);
+                        editor.commit();
+
+                        best_score.setText(String.valueOf(best_value));
+                    }
+
+                    //Animation
+                    cells[newx][newy].startAnimation(pulse);
+
                 }
                 canMove = false;
                 impossibleMoves = 0;
@@ -278,6 +340,8 @@ public class MainActivity extends AppCompatActivity {
                     generateCell(1);
                     lastCombined = "";
 
+                    move.setText(String.valueOf(moves_value++) + " Moves");
+
                     return Direction.up;
 
                 } else if (inRange(angle, 0, 45) || inRange(angle, 315, 360)) {
@@ -293,6 +357,8 @@ public class MainActivity extends AppCompatActivity {
 
                     generateCell(1);
                     lastCombined = "";
+
+                    move.setText(String.valueOf(moves_value++) + " Moves");
 
                     return Direction.right;
 
@@ -310,6 +376,8 @@ public class MainActivity extends AppCompatActivity {
                     generateCell(1);
                     lastCombined = "";
 
+                    move.setText(String.valueOf(moves_value++) + " Moves");
+
                     return Direction.down;
 
                 } else {
@@ -325,6 +393,7 @@ public class MainActivity extends AppCompatActivity {
 
                     generateCell(1);
                     lastCombined = "";
+                    move.setText(String.valueOf(moves_value++) + " Moves");
 
                     return Direction.left;
 
@@ -347,6 +416,25 @@ public class MainActivity extends AppCompatActivity {
             double angle = getAngle(x1, y1, x2, y2);
             return Direction.fromAngle(angle);
         }
+    }
+
+    public void new_game(View v) {
+        timer.setBase(SystemClock.elapsedRealtime());
+        timer.stop();
+        timer.start();
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                cells[i][j].setText(cell_values[0]);
+                cells[i][j].setBackgroundResource(cell_bg[0]);
+            }
+        }
+
+        score.setText("0");
+        move.setText("0 Moves");
+        moves_value = 1;
+
+        generateCell(2);
     }
 
 }

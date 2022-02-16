@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Dam/StudioProjects/2048/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/Dam/StudioProjects/2048/app/src/main/res/drawable/cell_2.xml" value="0.2445" />
+        <entry key="..\:/Users/Dam/StudioProjects/2048/app/src/main/res/drawable/cell_empty.xml" value="0.2445" />
+        <entry key="..\:/Users/Dam/StudioProjects/2048/app/src/main/res/drawable/score_bg.xml" value="0.2445" />
+        <entry key="..\:/Users/Dam/StudioProjects/2048/app/src/main/res/drawable/table.xml" value="0.2445" />
+        <entry key="..\:/Users/Dam/StudioProjects/2048/app/src/main/res/layout/activity_main.xml" value="0.4" />
         <entry key="..\:/Users/dam/AndroidStudioProjects/2048/app/src/main/res/layout/activity_main.xml" value="0.16979166666666667" />
       </map>
     </option>

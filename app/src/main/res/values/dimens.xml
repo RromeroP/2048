@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="cell_size">90dp</dimen>
-    <dimen name="margin_padding">4dp</dimen>
+    <dimen name="cell_size">85dp</dimen>
+    <dimen name="margin_padding">6dp</dimen>
     <dimen name="cell_radius">7dp</dimen>
     <dimen name="cell_text">32sp</dimen>
 </resources>
