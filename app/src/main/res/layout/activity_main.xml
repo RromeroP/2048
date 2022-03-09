@@ -7,166 +7,6 @@
     android:background="#1A1914"
     tools:context=".MainActivity">
 
-    <!--
-    <androidx.gridlayout.widget.GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/table"
-        android:padding="@dimen/margin_padding"
-        app:columnCount="4"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:rowCount="4">
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="@dimen/cell_size"
-            android:layout_height="@dimen/cell_size"
-            android:layout_margin="@dimen/margin_padding"
-            android:background="@drawable/cell_empty"
-            android:gravity="center"
-            android:textSize="@dimen/cell_text"
-            android:textStyle="bold" />
-
-    </androidx.gridlayout.widget.GridLayout>
--->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
@@ -180,10 +20,11 @@
             android:id="@+id/score"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginRight="2.5dp"
             android:layout_marginBottom="7dp"
             android:background="@drawable/score_bg"
             app:layout_constraintBottom_toTopOf="@+id/newButton"
-            app:layout_constraintEnd_toEndOf="@+id/newButton"
+            app:layout_constraintEnd_toStartOf="@id/best_score"
             app:layout_constraintStart_toStartOf="@+id/newButton"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -221,12 +62,12 @@
             android:id="@+id/best_score"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginLeft="2.5dp"
             android:layout_marginBottom="7dp"
             android:background="@drawable/score_bg"
-            app:layout_constraintBottom_toTopOf="@+id/undoButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/undoButton"
+            app:layout_constraintBottom_toTopOf="@+id/newButton"
+            app:layout_constraintEnd_toEndOf="@+id/newButton"
+            app:layout_constraintStart_toEndOf="@+id/score"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -274,48 +115,50 @@
 
         <TextView
             android:id="@+id/newButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
             android:background="@drawable/cell_64"
+            android:gravity="center"
             android:onClick="new_game"
             android:paddingHorizontal="36dp"
             android:paddingVertical="13dp"
-            android:text="NEW"
+            android:text="NEW GAME"
             android:textColor="@android:color/white"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/undoButton"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/text_2048" />
 
-        <TextView
-            android:id="@+id/undoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/cell_64"
-            android:paddingHorizontal="36dp"
-            android:paddingVertical="13dp"
-            android:text="UNDO"
-            android:textColor="@android:color/white"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/comment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:text="Join the numbers and get to the 2048 tile!"
+        android:textColor="#807265"
+        android:textSize="21sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/Table"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <androidx.gridlayout.widget.GridLayout
         android:id="@+id/Table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/table"
         android:padding="@dimen/margin_padding"
         app:columnCount="4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/comment"
         app:rowCount="4">
 
         <TextView
@@ -487,6 +330,7 @@
         android:layout_marginTop="5dp"
         android:text="0 Moves"
         android:textColor="#807265"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/Table"
         app:layout_constraintTop_toBottomOf="@+id/Table" />
 
@@ -496,6 +340,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:textColor="#807265"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/Table"
         app:layout_constraintTop_toBottomOf="@+id/Table" />
 

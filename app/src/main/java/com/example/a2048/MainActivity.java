@@ -3,6 +3,7 @@ package com.example.a2048;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Chronometer;
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     static TextView best_score;
     static int best_value;
 
+    static MainActivity context;
+
     static TextView[][] cells = new TextView[SIZE][SIZE];
     static String[] cell_values = {"", "2", "4", "8", "16", "32", "64",
             "128", "256", "512", "1024", "2048"};
@@ -43,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     static String lastCombined = "";
 
     static int impossibleMoves = 0;
-    Chronometer timer;
+    static int score_value = 0;
+    static Chronometer timer;
 
     static Animation pulse;
     static Animation spawn;
@@ -51,7 +57,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getSupportActionBar().hide();
+
         setContentView(R.layout.activity_main);
+
+        context = this;
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         editor = pref.edit();
@@ -89,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
         generateCell(2);
 
         timer = (Chronometer) findViewById(R.id.timer);
+        timer.setBase(SystemClock.elapsedRealtime());
         timer.start();
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
-        getSupportActionBar().hide();
     }
 
     private static void checkPossibleMovements() {
@@ -139,10 +153,33 @@ public class MainActivity extends AppCompatActivity {
         if (movesUp == 48) movesTotal -= 1;
         if (movesLeft == 48) movesTotal -= 1;
 
-        //TODO Make a lose message window or change to a different activity here
-        if (movesTotal == 0)
-            Toast.makeText(score.getContext(), "You lose", Toast.LENGTH_SHORT).show();
+        winCheck(movesTotal, false);
 
+
+    }
+
+    private static void winCheck(int movesTotal, boolean win) {
+
+        if (movesTotal == 0 || win) {
+            Intent intent = new Intent(context, GameOver.class);
+
+            if (movesTotal == 0) {
+                intent.putExtra("title", "YOU LOSE");
+                intent.putExtra("bonus", 1.0);
+            } else {
+                intent.putExtra("title", "YOU WIN");
+                intent.putExtra("bonus", 1.5);
+            }
+
+
+            intent.putExtra("score", score_value);
+            intent.putExtra("moves", moves_value);
+
+            long elapsedMillis = SystemClock.elapsedRealtime() - timer.getBase();
+            intent.putExtra("ms", elapsedMillis);
+
+            context.startActivity(intent);
+        }
     }
 
     private static void generateCell(int quantity) {
@@ -221,7 +258,6 @@ public class MainActivity extends AppCompatActivity {
         int newx = x;
         int newy = y;
         String new_value;
-        int score_value;
 
         String cellText = (String) cells[x][y].getText();
 
@@ -277,6 +313,12 @@ public class MainActivity extends AppCompatActivity {
 
                     //Animation
                     cells[newx][newy].startAnimation(pulse);
+
+
+                    if (new_value == "2048") {
+                        winCheck(2048, true);
+                    }
+
 
                 }
                 canMove = false;
@@ -340,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
                     generateCell(1);
                     lastCombined = "";
 
-                    move.setText(String.valueOf(moves_value++) + " Moves");
+                    move.setText(moves_value++ + " Moves");
 
                     return Direction.up;
 
@@ -358,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
                     generateCell(1);
                     lastCombined = "";
 
-                    move.setText(String.valueOf(moves_value++) + " Moves");
+                    move.setText(moves_value++ + " Moves");
 
                     return Direction.right;
 
@@ -376,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
                     generateCell(1);
                     lastCombined = "";
 
-                    move.setText(String.valueOf(moves_value++) + " Moves");
+                    move.setText(moves_value++ + " Moves");
 
                     return Direction.down;
 
@@ -393,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
 
                     generateCell(1);
                     lastCombined = "";
-                    move.setText(String.valueOf(moves_value++) + " Moves");
+                    move.setText(moves_value++ + " Moves");
 
                     return Direction.left;
 
@@ -436,5 +478,4 @@ public class MainActivity extends AppCompatActivity {
 
         generateCell(2);
     }
-
 }
